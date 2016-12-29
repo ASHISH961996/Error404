@@ -58,7 +58,7 @@ function Read(tableName,toSelect,condition,callback){
 		{
 			callback(error=err,rows=row);
 			console.log("sad");
-			console.log(rosw);
+			//console.log(rosw);
 		}
 		else{
 			callback(error=err,rows=row);

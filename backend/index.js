@@ -9,6 +9,7 @@ app.use(bodyParser.json());
 app.post("/useradd",function(req,res) {
 	console.log("User wants to add an item");
 	var length = req.body.length;
+	console.log(length);
 	for(var x =0;x<length;x++)
 	{
 		db.Create("table_user","email,item,category","'"+"req.body[x].email"+"','"+req.body[x].name+"','"+req.body[x].category+"'",function(err,data){
@@ -70,6 +71,7 @@ app.post("/beaconremove",function(req,res){
 })
 app.get("/beacon",function(req,res){
 	var instance_id = req.param("instance_id");
+	console.log("------"+instance_id);
 	var cat = [];
 	db.Read("table_beacon","*","instance_id = '"+instance_id+"'",function(err,data){
 		length = data.length;
@@ -120,17 +122,50 @@ app.get("/beacon",function(req,res){
 						var json = JSON.stringify({ 
 			    				ItemsAvailable: cat
 			  				});
-			  			res.end(json); 
+						console.log("Finall");
+						console.log(json);
+			  			console.log(res.end(json) + "console response json"); 
 					}
 				})
 			}
 		}
 		else{
 			console.log("Not found");
-			res.end("Item not found");
+			console.log(res.end("Item not found")+ "         not found");
 			return;
 		}
 		
+	})
+})
+app.post("/product",function(req,res){
+	var item = req.body[0].name;
+	var category = req.body[0].category;
+	console.log(category);
+	console.log(item);
+	var cat = [];
+	db.Read("table_beacon","*","category = '"+category+"' AND item = '"+item+"'",function(err,data){
+		length = data.length;
+		if(err)
+		{
+			console.log("err");
+			console.log(data);
+			res.end("Request Failed");
+		}
+		else if(length != 0){
+			for(var i =0;i<length;i++)
+			{
+				cat.push({instance_id : data[i].instance_id,
+							shop : data[i].shop});
+			}
+			var json = JSON.stringify({ 
+			    				Beacons: cat
+			  				});
+			console.log(json);
+			res.end(json);
+		}
+		else{
+			res.end("no entry found");
+		}
 	})
 })
 app.listen(3000);
